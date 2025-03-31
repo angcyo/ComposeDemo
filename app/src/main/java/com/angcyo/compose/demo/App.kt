@@ -25,19 +25,22 @@ import androidx.compose.ui.tooling.preview.Preview
 @Composable
 @Preview(showBackground = true)
 fun App() {
+    Log.i("Compose", "[${Thread.currentThread().name}]...app")
     MaterialTheme {
         var showContent by remember { mutableStateOf(false) }
-        Log.i("Compose", "[${Thread.currentThread().name}]showContent:${showContent.javaClass}")
+        Log.i("Compose", "[${Thread.currentThread().name}]showContent[${showContent.javaClass}]:${showContent}")
         Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
             Button(onClick = { showContent = !showContent }) {
                 Text("Click me!")
             }
+            Log.d("Compose", "[${Thread.currentThread().name}]...1")
             AnimatedVisibility(showContent) {
                 val greeting = remember { "Greeting().greet()" }
                 Column(
                     Modifier.fillMaxWidth(),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
+                    Log.d("Compose", "[${Thread.currentThread().name}]...2")
                     Image(painterResource(R.drawable.ic_launcher_background), null)
                     Text("Compose: $greeting")
                 }

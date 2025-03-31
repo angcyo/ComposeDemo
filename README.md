@@ -83,6 +83,16 @@ plugins {
 }
 ```
 
+```groovy
+android {
+    ...
+    buildFeatures {
+        compose true
+    }
+    ...
+}
+```
+
 `dependencies`
 
 ```groovy
