@@ -10,8 +10,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -27,24 +29,46 @@ import androidx.compose.ui.tooling.preview.Preview
 fun App() {
     Log.i("Compose", "[${Thread.currentThread().name}]...app")
     MaterialTheme {
+        Log.d("Compose", "[${Thread.currentThread().name}]...MaterialTheme")
         var showContent by remember { mutableStateOf(false) }
-        Log.i("Compose", "[${Thread.currentThread().name}]showContent[${showContent.javaClass}]:${showContent}")
+        //var showContent by rememberSaveable { mutableStateOf(false) }
+        Log.i(
+            "Compose",
+            "[${Thread.currentThread().name}]showContent[${showContent.javaClass}]:${showContent}"
+        )
         Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
+            Log.d("Compose", "[${Thread.currentThread().name}]...Column")
             Button(onClick = { showContent = !showContent }) {
+                Log.d("Compose", "[${Thread.currentThread().name}]...Button")
                 Text("Click me!")
             }
-            Log.d("Compose", "[${Thread.currentThread().name}]...1")
             AnimatedVisibility(showContent) {
+                Log.d("Compose", "[${Thread.currentThread().name}]...AnimatedVisibility")
                 val greeting = remember { "Greeting().greet()" }
                 Column(
                     Modifier.fillMaxWidth(),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    Log.d("Compose", "[${Thread.currentThread().name}]...2")
+                    Log.d("Compose", "[${Thread.currentThread().name}]...AnimatedVisibility:Column")
                     Image(painterResource(R.drawable.ic_launcher_background), null)
                     Text("Compose: $greeting")
                 }
             }
+            //--
+            var clicks by remember { mutableIntStateOf(0) }
+            ClickCounter(clicks) {
+                clicks++
+            }
         }
+    }
+}
+
+/**
+ * 重组
+ * https://developer.android.google.cn/develop/ui/compose/mental-model?hl=zh-cn#recomposition*/
+@Composable
+fun ClickCounter(clicks: Int, onClick: () -> Unit) {
+    Button(onClick = onClick) {
+        Text("I've been clicked $clicks times")
     }
 }
