@@ -21,3 +21,6 @@ dependencyResolutionManagement {
 
 rootProject.name = "ComposeDemo"
 include ':Demo'
+
+// angcyo
+apply from: "$gradleHost/master/includeAllModule.gradle"

@@ -18,5 +18,6 @@ local.properties
 # angcyo
 .idea
 .kotlin
+.apk
 .output
 ComposeCore

@@ -4,6 +4,11 @@ plugins {
     alias(libs.plugins.kotlin.compose)
 }
 
+apply from: "$gradleHost/master/key.gradle"
+apply from: "$gradleHost/master/v7v8a.gradle"
+//output
+apply from: "$gradleHost/master/collectProduct.gradle"
+
 android {
     namespace 'com.angcyo.compose.demo'
     compileSdk {
