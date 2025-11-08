@@ -13,4 +13,10 @@
 .externalNativeBuild
 .cxx
 local.properties
+
+
+# angcyo
 .idea
+.kotlin
+.output
+ComposeCore
