@@ -4,44 +4,22 @@ plugins {
     alias(libs.plugins.kotlin.compose)
 }
 
-apply from: "$gradleHost/master/key.gradle"
-apply from: "$gradleHost/master/v7v8a.gradle"
-//output
-apply from: "$gradleHost/master/collectProduct.gradle"
+ext {
+    V_CODE = "1"
+    V_NAME = "1.0.0"
+    APP_NAME = "ComposeDemo"
+    schema = "demo"
 
-android {
-    namespace 'com.angcyo.compose.demo'
-    compileSdk {
-        version = release(36)
-    }
+    application_id = "com.angcyo.compose.demo"
 
-    defaultConfig {
-        applicationId "com.angcyo.compose.demo"
-        minSdk 24
-        targetSdk 36
-        versionCode 1
-        versionName "1.0"
-
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-    }
-
-    buildTypes {
-        release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-        }
-    }
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_11
-        targetCompatibility JavaVersion.VERSION_11
-    }
-    kotlinOptions {
-        jvmTarget = '11'
-    }
-    buildFeatures {
-        compose true
-    }
+    //apk.gradle
+    //可用参数: #an:app名字; #vn:版本名; #t:当天日期; #fn:风味名; #bn:编译类型名;
+    //         #sn:使用的签名名称; #ka:使用的签名别名;
+    apkName = "#an-#vn_#fn_#bn_#ka"
 }
+
+// angcyo
+apply from: allGradle.composeApp
 
 dependencies {
     implementation libs.androidx.core.ktx
