@@ -62,6 +62,8 @@
                 <action android:name="android.intent.action.BATTERY_OKAY" />
                 <action android:name="android.intent.action.CAMERA_BUTTON" />
                 <action android:name="android.intent.action.MEDIA_BUTTON" />
+                <action android:name="android.intent.action.SCREEN_OFF" />
+                <action android:name="android.intent.action.SCREEN_ON" />
             </intent-filter>
         </receiver>
     </application>
