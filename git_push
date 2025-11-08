@@ -8,4 +8,4 @@ git remote -v
 
 git add .
 git commit -a -m "init"
-git push --set-upstream origin
+git push --set-upstream origin main
