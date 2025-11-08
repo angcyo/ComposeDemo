@@ -38,4 +38,8 @@ dependencies {
     androidTestImplementation libs.androidx.compose.ui.test.junit4
     debugImplementation libs.androidx.compose.ui.tooling
     debugImplementation libs.androidx.compose.ui.test.manifest
+
+    implementation project(allModule.app)
+    //implementation project(allModule.core)
+    //implementation project(allModule.basics)
 }
