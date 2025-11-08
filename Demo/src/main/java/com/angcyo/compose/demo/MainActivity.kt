@@ -28,9 +28,12 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewScreenSizes
 import com.angcyo.compose.basics.NotificationHelper
+import com.angcyo.compose.basics.requestIgnoreBatteryOptimizations
 import com.angcyo.compose.basics.toast
+import com.angcyo.compose.demo.services.HeartbeatWorker
 import com.angcyo.compose.demo.services.KeepAliveService
 import com.angcyo.compose.demo.ui.theme.ComposeDemoTheme
+import java.util.concurrent.TimeUnit
 
 /**
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
@@ -123,7 +126,16 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
         }) {
             Text(text = "启动保活服务")
         }
-
+        Button(onClick = {
+            HeartbeatWorker.enqueue(context, repeatIntervalTimeUnit = TimeUnit.SECONDS)
+        }) {
+            Text(text = "启动心跳")
+        }
+        Button(onClick = {
+            context.requestIgnoreBatteryOptimizations()
+        }) {
+            Text(text = "请求忽略电池优化")
+        }
     }
 }
 
