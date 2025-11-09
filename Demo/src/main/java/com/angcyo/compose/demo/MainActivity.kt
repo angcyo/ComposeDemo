@@ -6,30 +6,16 @@ import androidx.activity.compose.LocalActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccountBox
-import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.filled.Home
 import androidx.compose.material3.Button
-import androidx.compose.material3.Icon
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffold
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.tooling.preview.PreviewScreenSizes
 import com.angcyo.compose.basics.NotificationHelper
 import com.angcyo.compose.basics.requestIgnoreBatteryOptimizations
 import com.angcyo.compose.basics.toast
+import com.angcyo.compose.core.RunNavApp
 import com.angcyo.compose.demo.services.HeartbeatWorker
 import com.angcyo.compose.demo.services.KeepAliveService
 import com.angcyo.compose.demo.ui.theme.ComposeDemoTheme
@@ -45,13 +31,14 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             ComposeDemoTheme {
-                ComposeDemoApp()
+                //ComposeDemoApp()
+                RunNavApp()
             }
         }
     }
 }
 
-@PreviewScreenSizes
+/*@PreviewScreenSizes
 @Composable
 fun ComposeDemoApp() {
     var currentDestination by rememberSaveable { mutableStateOf(AppDestinations.HOME) }
@@ -62,34 +49,38 @@ fun ComposeDemoApp() {
                 item(
                     icon = {
                         Icon(
-                            it.icon,
-                            contentDescription = it.label
+                            it.icon, contentDescription = it.label
                         )
                     },
                     label = { Text(it.label) },
                     selected = it == currentDestination,
-                    onClick = { currentDestination = it }
-                )
+                    onClick = { currentDestination = it })
             }
-        }
-    ) {
+        }) {
         Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
             Greeting(
-                name = "Android",
-                modifier = Modifier.padding(innerPadding)
-            )
+                name = "Android", modifier = Modifier.padding(innerPadding)
+            )*//*MessageRow()*//*
+            //NavKey
+            LazyColumn {
+                // Add a single item
+                item {
+                    Text(text = "First item")
+                }
+
+                // Add 5 items
+                items(5) { index ->
+                    Text(text = "Item: $index")
+                }
+
+                // Add another single item
+                item {
+                    Text(text = "Last item")
+                }
+            }
         }
     }
-}
-
-enum class AppDestinations(
-    val label: String,
-    val icon: ImageVector,
-) {
-    HOME("Home", Icons.Default.Home),
-    FAVORITES("Favorites", Icons.Default.Favorite),
-    PROFILE("Profile", Icons.Default.AccountBox),
-}
+}*/
 
 @Composable
 fun Greeting(name: String, modifier: Modifier = Modifier) {
@@ -97,8 +88,7 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
     val context = LocalContext.current
     Column {
         Text(
-            text = "Hello $name!",
-            modifier = modifier
+            text = "Hello $name!", modifier = modifier
         )
         Button(onClick = {
             if (!NotificationHelper.isNotificationEnabled(context)) {
@@ -114,8 +104,7 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
                 //toast 提示
                 context.toast("请打开通知通道")
                 NotificationHelper.openNotificationChannelSettings(
-                    activity,
-                    KeepAliveService.CHANNEL_ID
+                    activity, KeepAliveService.CHANNEL_ID
                 )
             }
         }) {
