@@ -17,6 +17,12 @@ dependencyResolutionManagement {
         google()
         mavenCentral()
     }
+    // angcyo
+    versionCatalogs {
+        create("llibs") {
+            from(files("ComposeCore/_gradle/llibs.versions.toml"))
+        }
+    }
 }
 
 rootProject.name = "ComposeDemo"
