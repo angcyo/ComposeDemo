@@ -5,6 +5,8 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import androidx.core.content.ContextCompat
+import com.angcyo.compose.basics.startAppWithRoot
+import com.angcyo.compose.demo.screens.KeepAliveScreen
 
 
 /**
@@ -59,5 +61,7 @@ class BootReceiver : BroadcastReceiver() {
         ) {
             //
         }
+        //context.startApp(KeepAliveScreen.FEI_SHU_PACKAGE)
+        context.startAppWithRoot(KeepAliveScreen.FEI_SHU_PACKAGE)
     }
 }

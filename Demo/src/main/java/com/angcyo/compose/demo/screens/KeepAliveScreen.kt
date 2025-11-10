@@ -11,6 +11,8 @@ import androidx.compose.ui.tooling.preview.PreviewScreenSizes
 import androidx.compose.ui.unit.dp
 import com.angcyo.compose.basics.NotificationHelper
 import com.angcyo.compose.basics.requestIgnoreBatteryOptimizations
+import com.angcyo.compose.basics.startApp
+import com.angcyo.compose.basics.startAppWithRoot
 import com.angcyo.compose.basics.toast
 import com.angcyo.compose.core.screen.ScaffoldListScreen
 import com.angcyo.compose.demo.services.HeartbeatWorker
@@ -21,6 +23,10 @@ import java.util.concurrent.TimeUnit
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
  * @date 2025/11/10
  */
+
+object KeepAliveScreen {
+    const val FEI_SHU_PACKAGE = "com.ss.android.lark"
+}
 
 /**保活测试界面*/
 @PreviewScreenSizes
@@ -83,6 +89,16 @@ fun KeepAliveScreen() {
                     context.requestIgnoreBatteryOptimizations()
                 }) {
                     Text(text = "请求忽略电池优化")
+                }
+                Button(onClick = {
+                    context.startApp(KeepAliveScreen.FEI_SHU_PACKAGE)
+                }) {
+                    Text(text = "打开飞书")
+                }
+                Button(onClick = {
+                    context.startAppWithRoot(KeepAliveScreen.FEI_SHU_PACKAGE)
+                }) {
+                    Text(text = "打开飞书(Root)")
                 }
             }
         }
