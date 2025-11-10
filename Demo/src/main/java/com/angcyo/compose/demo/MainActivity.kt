@@ -5,17 +5,27 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.LocalActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Favorite
 import androidx.compose.material3.Button
+import androidx.compose.material3.Icon
+import androidx.compose.material3.ListItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import com.angcyo.compose.basics.NotificationHelper
 import com.angcyo.compose.basics.requestIgnoreBatteryOptimizations
 import com.angcyo.compose.basics.toast
 import com.angcyo.compose.core.RunNavApp
+import com.angcyo.compose.core.nav.LocalNavBackStack
+import com.angcyo.compose.core.nav.LocalNavRouter
+import com.angcyo.compose.core.nav.NavRouter.Companion.INITIAL_PATH
+import com.angcyo.compose.core.screen.ScaffoldListScreen
 import com.angcyo.compose.demo.screens.KeepAliveScreen
 import com.angcyo.compose.demo.services.HeartbeatWorker
 import com.angcyo.compose.demo.services.KeepAliveService
@@ -25,6 +35,9 @@ import java.util.concurrent.TimeUnit
 /**
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
  * @date 2025/11/08
+ *
+ * - [Icons](https://m3.material.io/styles/icons/overview)
+ * - [Icons](https://fonts.google.com/icons)
  */
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -34,7 +47,33 @@ class MainActivity : ComponentActivity() {
             ComposeDemoTheme {
                 //ComposeDemoApp()
                 RunNavApp {
-                    this["/", "KeepAliveScreen"] = { KeepAliveScreen() }
+                    this["/", "ComposeDemo"] = { MainScreen() }
+                    this["/KeepAliveScreen", "KeepAliveScreen"] = { KeepAliveScreen() }
+                }
+            }
+        }
+    }
+}
+
+/**主屏幕*/
+@Composable
+fun MainScreen() {
+    val router = LocalNavRouter.current
+    val navBack = LocalNavBackStack.current
+    val routeList = LocalNavRouter.current?.routeList ?: emptyList()
+    ScaffoldListScreen {
+        for (item in routeList) {
+            if (item.path != INITIAL_PATH) {
+                item(item.path) {
+                    ListItem(
+                        modifier = Modifier.clickable {
+                            router?.push(navBack, item)
+                        },
+                        headlineContent = { Text(item.showLabel) },
+                        leadingContent = {
+                            Icon(Icons.Outlined.Favorite, null, tint = Color.Unspecified)
+                        }
+                    )
                 }
             }
         }
