@@ -32,7 +32,9 @@ class MainActivity : ComponentActivity() {
         setContent {
             ComposeDemoTheme {
                 //ComposeDemoApp()
-                RunNavApp()
+                RunNavApp {
+
+                }
             }
         }
     }

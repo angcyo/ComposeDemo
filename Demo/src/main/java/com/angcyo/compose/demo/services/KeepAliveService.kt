@@ -53,11 +53,14 @@ class KeepAliveService : Service() {
         var notifyText: String? = null
 
         /**启动*/
-        fun start(context: Context) {
+        fun start(context: Context, message: String? = null) {
+            val intent = Intent(context, KeepAliveService::class.java).apply {
+                putExtra("message", message)
+            }
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                context.startForegroundService(Intent(context, KeepAliveService::class.java))
+                context.startForegroundService(intent)
             } else {
-                context.startService(Intent(context, KeepAliveService::class.java))
+                context.startService(intent)
             }
         }
     }
@@ -69,6 +72,9 @@ class KeepAliveService : Service() {
         }
         // Android O+ use startForegroundService to start; must call startForeground soon after
         startForeground(NOTIFY_ID, showNotification())
+
+        // 监听启动
+        BootReceiver.register(this)
     }
 
     /**
@@ -79,7 +85,7 @@ class KeepAliveService : Service() {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         // 做必要的心跳/检查/任务
         if (startId > 1) {//第几次启动
-            notifyText = "onStartCommand $startId"
+            notifyText = "onStartCommand $startId ${intent?.getStringExtra("message")}"
             showNotification()
         }
         return START_STICKY // 被系统杀后可能会尝试重启服务
