@@ -16,6 +16,7 @@ import com.angcyo.compose.basics.NotificationHelper
 import com.angcyo.compose.basics.requestIgnoreBatteryOptimizations
 import com.angcyo.compose.basics.toast
 import com.angcyo.compose.core.RunNavApp
+import com.angcyo.compose.demo.screens.KeepAliveScreen
 import com.angcyo.compose.demo.services.HeartbeatWorker
 import com.angcyo.compose.demo.services.KeepAliveService
 import com.angcyo.compose.demo.ui.theme.ComposeDemoTheme
@@ -33,7 +34,7 @@ class MainActivity : ComponentActivity() {
             ComposeDemoTheme {
                 //ComposeDemoApp()
                 RunNavApp {
-
+                    this["/", "KeepAliveScreen"] = { KeepAliveScreen() }
                 }
             }
         }
