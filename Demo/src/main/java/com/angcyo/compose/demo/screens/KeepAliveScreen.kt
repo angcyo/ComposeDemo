@@ -1,23 +1,35 @@
 package com.angcyo.compose.demo.screens
 
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material3.Icon
-import androidx.compose.material3.ListItem
+import androidx.activity.compose.LocalActivity
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.tooling.preview.PreviewScreenSizes
+import androidx.compose.ui.unit.dp
+import com.angcyo.compose.basics.NotificationHelper
+import com.angcyo.compose.basics.requestIgnoreBatteryOptimizations
+import com.angcyo.compose.basics.toast
 import com.angcyo.compose.core.screen.ScaffoldListScreen
+import com.angcyo.compose.demo.services.HeartbeatWorker
+import com.angcyo.compose.demo.services.KeepAliveService
+import java.util.concurrent.TimeUnit
 
 /**
  * @author <a href="mailto:angcyo@126.com">angcyo</a>
  * @date 2025/11/10
  */
 
-/**保活界面*/
+/**保活测试界面*/
+@PreviewScreenSizes
 @Composable
 fun KeepAliveScreen() {
+    val activity = LocalActivity.current
+    val context = LocalContext.current
     ScaffoldListScreen {
-        items(100) {
+        /*items(100) {
             ListItem(
                 headlineContent = { Text("Three line list item") },
                 supportingContent = { Text("Secondary text that\nspans multiple lines") },
@@ -27,9 +39,52 @@ fun KeepAliveScreen() {
                 trailingContent = { Text("meta") },
             )
             //Text("KeepAliveScreen $it")
-        }
-        /*item {
-            Text("KeepAliveScreen")
         }*/
+        item {
+            FlowRow(
+                horizontalArrangement = Arrangement.spacedBy(2.dp),
+                verticalArrangement = Arrangement.spacedBy(2.dp)
+            ) {
+                Button(onClick = {
+                    if (!NotificationHelper.isNotificationEnabled(context)) {
+                        //toast 提示
+                        context.toast("请打开通知权限")
+                        NotificationHelper.requestNotificationPermission(activity)
+                    }
+                }) {
+                    Text(text = "打开通知权限")
+                }
+                Button(onClick = {
+                    if (!NotificationHelper.isChannelEnabled(
+                            context,
+                            KeepAliveService.CHANNEL_ID
+                        )
+                    ) {
+                        //toast 提示
+                        context.toast("请打开通知通道")
+                        NotificationHelper.openNotificationChannelSettings(
+                            activity, KeepAliveService.CHANNEL_ID
+                        )
+                    }
+                }) {
+                    Text(text = "打开通道通知")
+                }
+                Button(onClick = {
+                    KeepAliveService.start(context)
+                }) {
+                    Text(text = "启动保活服务")
+                }
+                Button(onClick = {
+                    HeartbeatWorker.enqueue(context, repeatIntervalTimeUnit = TimeUnit.SECONDS)
+                }) {
+                    Text(text = "启动心跳")
+                }
+                Button(onClick = {
+                    context.requestIgnoreBatteryOptimizations()
+                }) {
+                    Text(text = "请求忽略电池优化")
+                }
+            }
+        }
     }
 }
