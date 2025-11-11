@@ -10,7 +10,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -21,11 +20,11 @@ import androidx.compose.ui.tooling.preview.PreviewScreenSizes
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.angcyo.compose.basics.NotificationHelper
+import com.angcyo.compose.basics.coroutine.sleep
 import com.angcyo.compose.basics.requestIgnoreBatteryOptimizations
 import com.angcyo.compose.basics.startApp
 import com.angcyo.compose.basics.startAppWithRoot
 import com.angcyo.compose.basics.toast
-import com.angcyo.compose.basics.unit.L
 import com.angcyo.compose.basics.unit.toTime
 import com.angcyo.compose.core.composes.FullscreenLoading
 import com.angcyo.compose.core.composes.LastLoadMoreItem
@@ -53,7 +52,6 @@ object KeepAliveScreen {
 @Composable
 fun KeepAliveScreen() {
     val messageLogModel = vmApp<MessageLogModel>()
-    val messageLogState = messageLogModel.messageLogData.observeAsState()
     val router = LocalNavRouter.current
     val activity = LocalActivity.current
     val context = LocalContext.current
@@ -80,12 +78,14 @@ fun KeepAliveScreen() {
             scope.launch {
                 isRefreshing = true
                 messageLogModel.queryRefresh()
+                sleep(300)
                 isRefreshing = false
             }
         },
         /*contentRefreshState = contentRefresh*/
     ) {
         //L.d("log...build screen ${contentRefresh}")
+        val messageLogList = messageLogModel.messageLogData.value!!
         contentRefresh
 
         item("flow", "flow") {
@@ -104,8 +104,7 @@ fun KeepAliveScreen() {
                 }
                 Button(onClick = {
                     if (!NotificationHelper.isChannelEnabled(
-                            context,
-                            KeepAliveService.CHANNEL_ID
+                            context, KeepAliveService.CHANNEL_ID
                         )
                     ) {
                         //toast 提示
@@ -161,13 +160,13 @@ fun KeepAliveScreen() {
         if (isRefreshing) {
             //--
             item("loading", "loading") {
-                FullscreenLoading(height = 100.dp)
+                FullscreenLoading(height = 300.dp)
             }
             //--
             lastItem()
         } else {
             itemsIndexed(
-                messageLogState.value!!,
+                messageLogList,
                 { index, item -> item.entityId },
                 { index, item -> "messageLog" }) { index, item ->
                 ListItem(
@@ -183,9 +182,9 @@ fun KeepAliveScreen() {
                 )
             }
             //--
-            if (messageLogState.value.isNullOrEmpty()) {
+            if (messageLogList.isEmpty()) {
                 item("loading", "loading") {
-                    FullscreenLoading(height = 100.dp) {
+                    FullscreenLoading(height = 300.dp) {
                         Text("~暂无数据~")
                     }
                 }

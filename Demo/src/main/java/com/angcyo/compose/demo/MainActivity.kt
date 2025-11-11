@@ -5,6 +5,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Favorite
 import androidx.compose.material3.Icon
@@ -52,15 +53,16 @@ fun MainScreen() {
         for (item in routeList) {
             if (item.path != INITIAL_PATH) {
                 item(item.path) {
-                    ListItem(
-                        modifier = Modifier.clickable {
-                            router?.push(route = item)
-                        },
-                        headlineContent = { Text(item.showLabel) },
-                        leadingContent = {
-                            Icon(Icons.Outlined.Favorite, null, tint = Color.Unspecified)
-                        }
-                    )
+                    ListItem(modifier = Modifier.clickable {
+                        router?.push(route = item)
+                    }, headlineContent = { Text(item.showLabel) }, leadingContent = {
+                        val dark = isSystemInDarkTheme()
+                        Icon(
+                            Icons.Outlined.Favorite,
+                            null,
+                            tint = if (dark) Color.White else Color.Unspecified
+                        )
+                    })
                 }
             }
         }
