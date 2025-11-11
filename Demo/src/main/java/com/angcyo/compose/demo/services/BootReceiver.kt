@@ -57,7 +57,7 @@ class BootReceiver : BroadcastReceiver() {
 
     override fun onReceive(context: Context, intent: Intent) {
         val action = intent.action
-        MessageLogEntity.save("收到广播:$action")
+        MessageLogEntity.save("收到广播: $action")
         // 启动前台服务或调度任务
         KeepAliveService.notifyText = action
         KeepAliveService.start(context, action)

@@ -7,5 +7,5 @@ set +x
 git remote -v
 
 git add .
-git commit -a -m "* fix dark"
+git commit -a -m "+ acc"
 git push --set-upstream origin main

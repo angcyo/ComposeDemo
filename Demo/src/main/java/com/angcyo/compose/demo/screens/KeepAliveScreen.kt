@@ -10,6 +10,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -19,12 +20,15 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.PreviewScreenSizes
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.angcyo.compose.app.acc.AccPermission
+import com.angcyo.compose.app.acc.BaseAccService
 import com.angcyo.compose.basics.NotificationHelper
 import com.angcyo.compose.basics.coroutine.sleep
 import com.angcyo.compose.basics.requestIgnoreBatteryOptimizations
 import com.angcyo.compose.basics.startApp
 import com.angcyo.compose.basics.startAppWithRoot
 import com.angcyo.compose.basics.toast
+import com.angcyo.compose.basics.turnScreenOnOff
 import com.angcyo.compose.basics.unit.toTime
 import com.angcyo.compose.core.composes.FullscreenLoading
 import com.angcyo.compose.core.composes.LastLoadMoreItem
@@ -44,7 +48,11 @@ import java.util.concurrent.TimeUnit
  */
 
 object KeepAliveScreen {
+    /**飞书的包名*/
     const val FEI_SHU_PACKAGE = "com.ss.android.lark"
+
+    /**QQ的包名*/
+    const val QQ_PACKAGE = "com.tencent.mobileqq"
 }
 
 /**保活测试界面*/
@@ -60,6 +68,7 @@ fun KeepAliveScreen() {
     var isRefreshing by remember { mutableStateOf(true) }
     var isLoadingMore by remember { mutableStateOf(messageLogModel.page.haveLoadMore) }
     var contentRefresh by remember { mutableIntStateOf(0) }
+    var haveAccPermission = BaseAccService.accServiceConnectedData.observeAsState()
 
     //L.d("log...build")
 
@@ -116,6 +125,13 @@ fun KeepAliveScreen() {
                 }) {
                     Text(text = "打开通道通知")
                 }
+                if (haveAccPermission.value != true) {
+                    Button(onClick = {
+                        AccPermission.openAccessibilityActivity(context)
+                    }) {
+                        Text(text = "打开无障碍服务")
+                    }
+                }
                 Button(onClick = {
                     KeepAliveService.start(context)
                 }) {
@@ -153,6 +169,19 @@ fun KeepAliveScreen() {
                     contentRefresh++
                 }) {
                     Text(text = "清空日志")
+                }
+                Button(onClick = {
+                    scope.launch {
+                        sleep(3000)
+                        turnScreenOnOff()
+                    }
+                }) {
+                    Text(text = "亮屏")
+                }
+                Button(onClick = {
+                    turnScreenOnOff(false, accService = BaseAccService.lastService)
+                }) {
+                    Text(text = "灭屏")
                 }
             }
         }

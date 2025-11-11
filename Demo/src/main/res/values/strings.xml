@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">ComposeDemo</string>
+
+    <!--覆盖库中资源-->
+    <string name="lib_accessibility_label">Compose无障碍助手</string>
+    <string name="lib_accessibility_summary">Compose无障碍助手</string>
+    <string name="lib_accessibility_description">Compose无障碍助手</string>
 </resources>
