@@ -14,7 +14,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import com.angcyo.compose.core.RunNavApp
-import com.angcyo.compose.core.nav.LocalNavBackStack
 import com.angcyo.compose.core.nav.LocalNavRouter
 import com.angcyo.compose.core.nav.NavRouter.Companion.INITIAL_PATH
 import com.angcyo.compose.core.screen.ScaffoldListScreen
@@ -48,7 +47,6 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun MainScreen() {
     val router = LocalNavRouter.current
-    val navBack = LocalNavBackStack.current
     val routeList = LocalNavRouter.current?.routeList ?: emptyList()
     ScaffoldListScreen {
         for (item in routeList) {
@@ -56,7 +54,7 @@ fun MainScreen() {
                 item(item.path) {
                     ListItem(
                         modifier = Modifier.clickable {
-                            router?.push(navBack, item)
+                            router?.push(route = item)
                         },
                         headlineContent = { Text(item.showLabel) },
                         leadingContent = {

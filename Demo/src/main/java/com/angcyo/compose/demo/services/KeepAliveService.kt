@@ -9,6 +9,7 @@ import android.content.Intent
 import android.os.Build
 import android.os.IBinder
 import com.angcyo.compose.basics.NotificationHelper
+import com.angcyo.compose.core.objectbox.MessageLogEntity
 import com.angcyo.compose.demo.MainActivity
 
 
@@ -78,14 +79,16 @@ class KeepAliveService : Service() {
     }
 
     /**
-     * - [START_STICKY]
-     * - [START_NOT_STICKY]
-     * - [START_REDELIVER_INTENT]
+     * - [Service.START_STICKY]
+     * - [Service.START_NOT_STICKY]
+     * - [Service.START_REDELIVER_INTENT]
      * */
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        val message = intent?.getStringExtra("message") ?: ""
+        MessageLogEntity.save("onStartCommand:$startId $message")
         // 做必要的心跳/检查/任务
         if (startId > 1) {//第几次启动
-            notifyText = "onStartCommand $startId ${intent?.getStringExtra("message")}"
+            notifyText = "onStartCommand $startId $message"
             showNotification()
         }
         return START_STICKY // 被系统杀后可能会尝试重启服务

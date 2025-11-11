@@ -1,11 +1,14 @@
 package com.angcyo.compose.demo.services
 
+import android.app.job.JobScheduler
 import android.content.Context
 import androidx.work.CoroutineWorker
 import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.WorkerParameters
+import com.angcyo.compose.basics.annotation.Api
+import com.angcyo.compose.core.objectbox.MessageLogEntity
 import java.util.concurrent.TimeUnit
 
 /**
@@ -22,6 +25,7 @@ class HeartbeatWorker(appContext: Context, params: WorkerParameters) :
     companion object {
 
         /**排队一个心跳任务*/
+        @Api
         fun enqueue(
             context: Context,
             repeatInterval: Long = 10,
@@ -46,6 +50,7 @@ class HeartbeatWorker(appContext: Context, params: WorkerParameters) :
         // 示例：与服务器短连接、发送心跳
         // 注意不要阻塞太久
         KeepAliveService.notifyText = "HeartbeatWorker"
+        MessageLogEntity.save("HeartbeatWorker:doWork")
         return Result.success()
     }
 }

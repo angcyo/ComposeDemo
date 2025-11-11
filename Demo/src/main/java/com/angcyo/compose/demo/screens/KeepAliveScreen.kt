@@ -4,8 +4,10 @@ import androidx.activity.compose.LocalActivity
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.material3.Button
+import androidx.compose.material3.ListItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.PreviewScreenSizes
 import androidx.compose.ui.unit.dp
@@ -14,7 +16,11 @@ import com.angcyo.compose.basics.requestIgnoreBatteryOptimizations
 import com.angcyo.compose.basics.startApp
 import com.angcyo.compose.basics.startAppWithRoot
 import com.angcyo.compose.basics.toast
+import com.angcyo.compose.basics.unit.size
+import com.angcyo.compose.core.nav.LocalNavRouter
+import com.angcyo.compose.core.objectbox.MessageLogModel
 import com.angcyo.compose.core.screen.ScaffoldListScreen
+import com.angcyo.compose.core.viewmodel.vmApp
 import com.angcyo.compose.demo.services.HeartbeatWorker
 import com.angcyo.compose.demo.services.KeepAliveService
 import java.util.concurrent.TimeUnit
@@ -32,21 +38,13 @@ object KeepAliveScreen {
 @PreviewScreenSizes
 @Composable
 fun KeepAliveScreen() {
+    val messageLogModel = vmApp<MessageLogModel>()
+    val messageLogState = messageLogModel.messageLogData.observeAsState()
+    val router = LocalNavRouter.current
     val activity = LocalActivity.current
     val context = LocalContext.current
     ScaffoldListScreen {
-        /*items(100) {
-            ListItem(
-                headlineContent = { Text("Three line list item") },
-                supportingContent = { Text("Secondary text that\nspans multiple lines") },
-                leadingContent = {
-                    Icon(Icons.Filled.Favorite, contentDescription = "Localized description")
-                },
-                trailingContent = { Text("meta") },
-            )
-            //Text("KeepAliveScreen $it")
-        }*/
-        item {
+        item("flow", "flow") {
             FlowRow(
                 horizontalArrangement = Arrangement.spacedBy(2.dp),
                 verticalArrangement = Arrangement.spacedBy(2.dp)
@@ -100,7 +98,29 @@ fun KeepAliveScreen() {
                 }) {
                     Text(text = "打开飞书(Root)")
                 }
+                Button(onClick = {
+                    router?.push {
+                        KeepAliveScreen()
+                    }
+                }) {
+                    Text(text = "testRoute")
+                }
             }
+        }
+        //--
+        items(
+            messageLogState.value.size(),
+            { index ->
+                messageLogState.value!![index].entityId
+            },
+            { index ->
+                "messageLog"
+            }) { index ->
+            val messageLog = messageLogState.value!![index]
+            ListItem(
+                headlineContent = { Text(messageLog.content ?: "") },
+            )
+            //Text("KeepAliveScreen $it")
         }
     }
 }
