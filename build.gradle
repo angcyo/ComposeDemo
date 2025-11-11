@@ -1,3 +1,15 @@
+// ObjectBox
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        // Android Gradle Plugin 8.0 or later supported
+        //classpath(libs.gradle)
+        classpath("io.objectbox:objectbox-gradle-plugin:$objectboxVersion")
+    }
+}
+
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 plugins {
     alias(llibs.plugins.android.application) apply false
