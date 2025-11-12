@@ -5,14 +5,11 @@ import android.view.MotionEvent
 import android.view.accessibility.AccessibilityEvent
 import android.view.accessibility.AccessibilityEvent.TYPE_NOTIFICATION_STATE_CHANGED
 import com.angcyo.compose.app.acc.AccAccessibilityService
-import com.angcyo.compose.basics.global.lastActivity
-import com.angcyo.compose.basics.global.lastContext
 import com.angcyo.compose.basics.startApp
 import com.angcyo.compose.basics.startAppWithRoot
 import com.angcyo.compose.basics.turnScreenOnOff
 import com.angcyo.compose.basics.unit.L
 import com.angcyo.compose.basics.unit.simpleHash
-import com.angcyo.compose.basics.wakeUpAndUnlock
 import com.angcyo.compose.core.objectbox.MessageLogEntity
 import com.angcyo.compose.demo.screens.KeepAliveScreen
 
@@ -30,8 +27,8 @@ class AppAccAccessibilityService : AccAccessibilityService() {
 
     override fun onAccessibilityEvent(event: AccessibilityEvent) {
         super.onAccessibilityEvent(event)
-        //L.v("${this.simpleHash()} $event")
         if (event.eventType == TYPE_NOTIFICATION_STATE_CHANGED) {
+            L.v("${this.simpleHash()} $event")
             if (event.packageName == KeepAliveScreen.QQ_PACKAGE) {
                 //来自QQ的消息
                 val text = event.text

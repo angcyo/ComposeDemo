@@ -68,7 +68,7 @@ fun KeepAliveScreen() {
     var isRefreshing by remember { mutableStateOf(true) }
     var isLoadingMore by remember { mutableStateOf(messageLogModel.page.haveLoadMore) }
     var contentRefresh by remember { mutableIntStateOf(0) }
-    var haveAccPermission = BaseAccService.accServiceConnectedData.observeAsState()
+    val haveAccPermission by BaseAccService.accServiceConnectedData.observeAsState()
 
     //L.d("log...build")
 
@@ -102,30 +102,40 @@ fun KeepAliveScreen() {
                 horizontalArrangement = Arrangement.spacedBy(2.dp),
                 verticalArrangement = Arrangement.spacedBy(2.dp)
             ) {
-                Button(onClick = {
-                    if (!NotificationHelper.isNotificationEnabled(context)) {
-                        //toast 提示
-                        context.toast("请打开通知权限")
-                        NotificationHelper.requestNotificationPermission(activity)
+                if (!NotificationHelper.isNotificationEnabled(context)) {
+                    Button(onClick = {
+                        if (!NotificationHelper.isNotificationEnabled(context)) {
+                            //toast 提示
+                            context.toast("请打开通知权限")
+                            NotificationHelper.requestNotificationPermission(activity)
+                            contentRefresh++
+                        }
+                    }) {
+                        Text(text = "打开通知权限")
                     }
-                }) {
-                    Text(text = "打开通知权限")
                 }
-                Button(onClick = {
-                    if (!NotificationHelper.isChannelEnabled(
-                            context, KeepAliveService.CHANNEL_ID
-                        )
-                    ) {
-                        //toast 提示
-                        context.toast("请打开通知通道")
-                        NotificationHelper.openNotificationChannelSettings(
-                            activity, KeepAliveService.CHANNEL_ID
-                        )
+                if (!NotificationHelper.isChannelEnabled(
+                        context, KeepAliveService.CHANNEL_ID
+                    )
+                ) {
+                    Button(onClick = {
+                        if (!NotificationHelper.isChannelEnabled(
+                                context,
+                                KeepAliveService.CHANNEL_ID
+                            )
+                        ) {
+                            //toast 提示
+                            context.toast("请打开通知通道")
+                            NotificationHelper.openNotificationChannelSettings(
+                                activity, KeepAliveService.CHANNEL_ID
+                            )
+                            contentRefresh++
+                        }
+                    }) {
+                        Text(text = "打开通道通知")
                     }
-                }) {
-                    Text(text = "打开通道通知")
                 }
-                if (haveAccPermission.value != true) {
+                if (haveAccPermission != true) {
                     Button(onClick = {
                         AccPermission.openAccessibilityActivity(context)
                     }) {
@@ -173,7 +183,7 @@ fun KeepAliveScreen() {
                 Button(onClick = {
                     scope.launch {
                         sleep(3000)
-                        turnScreenOnOff()
+                        turnScreenOnOff(unlock = true)
                     }
                 }) {
                     Text(text = "亮屏")
