@@ -3,11 +3,14 @@ package com.angcyo.compose.demo.screens
 import androidx.activity.compose.LocalActivity
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.Button
 import androidx.compose.material3.ListItem
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
@@ -16,10 +19,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.PreviewScreenSizes
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.angcyo.compose.app.acc.AccPermission
 import com.angcyo.compose.app.acc.BaseAccService
 import com.angcyo.compose.basics.NotificationHelper
@@ -29,14 +34,18 @@ import com.angcyo.compose.basics.startApp
 import com.angcyo.compose.basics.startAppWithRoot
 import com.angcyo.compose.basics.toast
 import com.angcyo.compose.basics.turnScreenOnOff
+import com.angcyo.compose.basics.unit.L
 import com.angcyo.compose.basics.unit.toTime
 import com.angcyo.compose.core.composes.FullscreenLoading
 import com.angcyo.compose.core.composes.LastLoadMoreItem
 import com.angcyo.compose.core.composes.lastItem
 import com.angcyo.compose.core.nav.LocalNavRouter
+import com.angcyo.compose.core.objectbox.MessageLogEntity
 import com.angcyo.compose.core.objectbox.MessageLogModel
 import com.angcyo.compose.core.screen.ScaffoldListScreen
 import com.angcyo.compose.core.viewmodel.vmApp
+import com.angcyo.compose.core.viewmodel.watch
+import com.angcyo.compose.demo.AppKeys
 import com.angcyo.compose.demo.services.HeartbeatWorker
 import com.angcyo.compose.demo.services.KeepAliveService
 import kotlinx.coroutines.launch
@@ -63,21 +72,38 @@ fun KeepAliveScreen() {
     val router = LocalNavRouter.current
     val activity = LocalActivity.current
     val context = LocalContext.current
+    val lifecycleOwner = LocalLifecycleOwner.current
 
     val scope = rememberCoroutineScope()
     var isRefreshing by remember { mutableStateOf(true) }
     var isLoadingMore by remember { mutableStateOf(messageLogModel.page.haveLoadMore) }
     var contentRefresh by remember { mutableIntStateOf(0) }
     val haveAccPermission by BaseAccService.accServiceConnectedData.observeAsState()
+    val autoStartChecked = remember { mutableStateOf(AppKeys.bootAutoStart) }
 
     //L.d("log...build")
-
     LaunchedEffect(Unit) {
-        //L.d("log...first")
+        L.d("log...LaunchedEffect")
         scope.launch {
             isRefreshing = true
             messageLogModel.queryRefresh()
             isRefreshing = false
+        }
+    }
+
+    DisposableEffect(LocalLifecycleOwner.current) {
+        //L.d("log...DisposableEffect")
+        val observer =
+            MessageLogEntity.messageLogUpdateData.watch(lifecycleOwner, allowBackward = false) {
+                scope.launch {
+                    isRefreshing = true
+                    messageLogModel.queryRefresh()
+                    isRefreshing = false
+                }
+            }
+        onDispose {
+            //L.d("log...DisposableEffect onDispose")
+            MessageLogEntity.messageLogUpdateData.removeObserver(observer)
         }
     }
 
@@ -102,6 +128,16 @@ fun KeepAliveScreen() {
                 horizontalArrangement = Arrangement.spacedBy(2.dp),
                 verticalArrangement = Arrangement.spacedBy(2.dp)
             ) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(2.dp)
+                ) {
+                    Text("自动启动")
+                    Switch(autoStartChecked.value, onCheckedChange = {
+                        autoStartChecked.value = it
+                        AppKeys.bootAutoStart = it
+                    })
+                }
                 if (!NotificationHelper.isNotificationEnabled(context)) {
                     Button(onClick = {
                         if (!NotificationHelper.isNotificationEnabled(context)) {

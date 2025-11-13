@@ -5,7 +5,13 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import androidx.core.content.ContextCompat
+import com.angcyo.compose.basics.hawk.hawkHave
+import com.angcyo.compose.basics.hawk.hawkPut
+import com.angcyo.compose.basics.startAppWithRoot
 import com.angcyo.compose.core.objectbox.MessageLogEntity
+import com.angcyo.compose.demo.AppKeys
+import com.angcyo.compose.demo.screens.KeepAliveScreen
+import java.util.Calendar
 
 
 /**
@@ -63,5 +69,42 @@ class BootReceiver : BroadcastReceiver() {
         KeepAliveService.start(context, action)
         //context.startApp(KeepAliveScreen.FEI_SHU_PACKAGE)
         //context.startAppWithRoot(KeepAliveScreen.FEI_SHU_PACKAGE)
+        if (AppKeys.bootAutoStart) {
+            autoStart(context)
+        }
+    }
+
+    fun autoStart(context: Context) {
+        //2025-11-13 08:44:52
+        val calendar = Calendar.getInstance()
+        val year = calendar.get(Calendar.YEAR) //2025
+        val month = calendar.get(Calendar.MONTH) + 1 // 11
+        val day = calendar.get(Calendar.DAY_OF_MONTH) // 13
+        val hours = calendar.get(Calendar.HOUR_OF_DAY) // 8
+        val minute = calendar.get(Calendar.MINUTE) // 44
+        val seconds = calendar.get(Calendar.SECOND) // 52
+        /*if (calendar.firstDayOfWeek != Calendar.MONDAY) {
+        }*/
+        val week = calendar.get(Calendar.DAY_OF_WEEK).run {
+            when (this) {
+                Calendar.SUNDAY -> 7
+                Calendar.MONDAY -> 1
+                Calendar.TUESDAY -> 2
+                Calendar.WEDNESDAY -> 3
+                Calendar.THURSDAY -> 4
+                Calendar.FRIDAY -> 5
+                Calendar.SATURDAY -> 6
+                else -> 0
+            }
+        }
+        val key = "${year}_${month}_${day}"
+        if (key.hawkHave()) {
+            return
+        }
+        if (hours >= 8 && hours <= 9 && minute <= 30 && week != 7 && week != 0) {
+            if (context.startAppWithRoot(KeepAliveScreen.FEI_SHU_PACKAGE)) {
+                key.hawkPut(true)
+            }
+        }
     }
 }
