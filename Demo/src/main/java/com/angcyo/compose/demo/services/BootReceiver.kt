@@ -69,7 +69,7 @@ class BootReceiver : BroadcastReceiver() {
         KeepAliveService.start(context, action)
         //context.startApp(KeepAliveScreen.FEI_SHU_PACKAGE)
         //context.startAppWithRoot(KeepAliveScreen.FEI_SHU_PACKAGE)
-        if (AppKeys.bootAutoStart) {
+        if (action == Intent.ACTION_SCREEN_ON && AppKeys.bootAutoStart) {
             autoStart(context)
         }
     }
